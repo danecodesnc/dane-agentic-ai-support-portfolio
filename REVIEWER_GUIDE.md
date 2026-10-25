@@ -4,11 +4,15 @@ This portfolio is designed to be easy to evaluate quickly.
 
 ## Start here
 
-**Live demo:** https://ai-support-portfolio-production.up.railway.app
+**Live demo:** https://danecodesnc.github.io/dane-agentic-ai-support-portfolio/
 
 Use the default sample ticket in **Customer Issue Investigation** and click **Analyze Customer Issue**.
 
-You will see a plain-English investigation of a synthetic HTTP 401 credential-rotation issue, including severity, reproduction status, technical evidence, missing information, troubleshooting steps, a customer-facing update, and an engineering-ready handoff.
+You will see a plain-English browser-based investigation of a synthetic HTTP 401 credential-rotation issue, including severity, synthetic evidence pattern matching, missing information, troubleshooting steps, a customer-facing update, and an engineering-ready handoff.
+
+## GitHub Pages hosting and simulation boundary
+
+This public site is HTML/CSS/JavaScript hosted entirely on GitHub Pages. It simulates the support workflows in your browser using transparent deterministic rules and synthetic data. The original Python/Streamlit/FastAPI source and tests remain intact in the repository; they do not execute in GitHub Pages. See [GITHUB_PAGES.md](GITHUB_PAGES.md) for activation.
 
 ## What this demonstrates
 
@@ -44,7 +48,7 @@ You will see a plain-English investigation of a synthetic HTTP 401 credential-ro
 
 The portfolio intentionally distinguishes between code that exists and code that has been executed.
 
-**Verified:** Python support logic, FastAPI endpoint behavior, deterministic guardrails, function-call control-loop plumbing, telemetry plumbing, and real n8n import/execution.
+**Verified by tests:** Python support logic, FastAPI endpoint behavior, deterministic guardrails, function-call control-loop plumbing, telemetry plumbing, n8n import/execution, and the new browser-only JavaScript workflow engine. The GitHub Pages UI does not call the Python backend or the OpenAI API.
 
 **Credential-gated:** the external OpenAI Responses API path is implemented with a fail-closed verifier but is not labeled as externally verified until a private API credential is used successfully.
 

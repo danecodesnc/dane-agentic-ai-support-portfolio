@@ -1,0 +1,62 @@
+name: GitHub Pages — Portfolio
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "docs/**"
+      - ".github/workflows/pages.yml"
+      - "README.md"
+      - "REVIEWER_GUIDE.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "portfolio-pages"
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify browser demo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: JavaScript syntax checks
+        run: |
+          node --check docs/app.js
+          node --check docs/engine.mjs
+      - name: Browser engine regression tests
+        run: node --test docs/engine.test.mjs
+      - name: Confirm static assets
+        run: |
+          test -s docs/index.html
+          test -s docs/styles.css
+          test -s docs/app.js
+          test -s docs/engine.mjs
+
+  deploy:
+    name: Publish to GitHub Pages
+    needs: verify
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload portfolio website
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs
+      - id: deployment
+        name: Deploy portfolio
+        uses: actions/deploy-pages@v4

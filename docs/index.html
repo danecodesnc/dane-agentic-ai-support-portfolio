@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#09152a">
+  <meta name="description" content="Dane Edwards' interactive technical support operations portfolio: synthetic API troubleshooting, engineering handoffs, incident escalation and support analytics.">
+  <title>Dane Edwards | AI Support Operations Portfolio</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Skip to interactive demos</a>
+  <header class="site-header">
+    <div class="shell navline">
+      <a class="brand" href="#top" aria-label="Dane Edwards portfolio home"><span class="brand-mark">DE<span class="brand-dot">.</span></span><span class="brand-title">Dane Edwards <small>AI SUPPORT OPERATIONS</small></span></a>
+      <nav aria-label="Main navigation" class="header-nav">
+        <a href="#workspace">Demos</a><a href="#how-it-works">Architecture</a><a class="nav-code" href="https://github.com/danecodesnc/dane-agentic-ai-support-portfolio" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero shell" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <div class="eyebrow"><span class="status-pulse" aria-hidden="true"></span> INTERACTIVE • BROWSER-BASED PORTFOLIO</div>
+        <h1 id="hero-title">Enterprise support, <span class="gradient-text">engineered for clarity.</span></h1>
+        <p class="hero-description">A hands-on demonstration of how structured evidence, API troubleshooting, explainable automation and human oversight improve technical support outcomes.</p>
+        <div class="hero-actions">
+          <a href="#workspace" class="btn btn-primary">Explore the demos <span aria-hidden="true">↗</span></a>
+          <a href="https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/blob/master/REVIEWER_GUIDE.md" class="btn btn-outline" target="_blank" rel="noopener noreferrer">Reviewer guide</a>
+        </div>
+        <div class="expertise"><span>REST / SOAP APIs</span><span>Escalations & RCA</span><span>Human-in-the-loop</span><span>Applied AI tooling</span></div>
+      </div>
+      <div class="hero-graphic" aria-hidden="true">
+        <div class="glow-ring"></div><div class="graphic-card">
+          <div class="graphic-card-header"><span class="tiny-dots"><i></i><i></i><i></i></span><span>support_investigation</span><span class="graphic-online">● SIMULATION</span></div>
+          <div class="graphic-code"><p><em>01</em> <b>INPUT</b> customer.report</p><p><em>02</em> <b>CHECK</b> synthetic.evidence</p><p><em>03</em> <b>CLASSIFY</b> priority + risk</p><p><em>04</em> <b>PROPOSE</b> resolution.steps</p><p><em>05</em> <b>REQUIRE</b> human.approval</p></div>
+          <div class="graphic-summary"><span>Decision trace</span><strong>Explainable & bounded</strong><small>NO EXTERNAL ACTIONS</small></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="shell">
+      <div class="notice" role="note"><span class="notice-icon" aria-hidden="true">ⓘ</span><div><strong>Safe, self-contained simulation.</strong> All customers, logs, metrics and incidents are fictional. These browser demos use deterministic JavaScript rules, not live LLM inference or a running Python backend. They never contact customer systems or perform external writes. <a href="#how-it-works">How it works</a>.</div></div>
+    </div>
+
+    <section id="workspace" class="workspace-section shell" aria-labelledby="workspace-title">
+      <div class="section-label">/ INTERACTIVE WORKBENCH</div>
+      <div class="section-heading"><div><h2 id="workspace-title">Explore the support lifecycle</h2><p>Choose a workflow below, then run a scenario. Every output is generated directly in your browser.</p></div><span class="tag-live">LOCAL DEMO ENGINE</span></div>
+      <div class="workspace">
+        <div class="tabs" role="tablist" aria-label="Portfolio demos">
+          <button id="tab-investigation" class="tab active" type="button" role="tab" aria-selected="true" aria-controls="panel-investigation" data-tab="investigation"><span>01</span> Investigation</button>
+          <button id="tab-handoff" class="tab" type="button" role="tab" aria-selected="false" aria-controls="panel-handoff" data-tab="handoff" tabindex="-1"><span>02</span> Engineering handoff</button>
+          <button id="tab-incident" class="tab" type="button" role="tab" aria-selected="false" aria-controls="panel-incident" data-tab="incident" tabindex="-1"><span>03</span> Incident routing</button>
+          <button id="tab-api" class="tab" type="button" role="tab" aria-selected="false" aria-controls="panel-api" data-tab="api" tabindex="-1"><span>04</span> API diagnostics</button>
+          <button id="tab-operations" class="tab" type="button" role="tab" aria-selected="false" aria-controls="panel-operations" data-tab="operations" tabindex="-1"><span>05</span> Support analytics</button>
+        </div>
+        <div class="workbench">
+          <section id="panel-investigation" class="panel" role="tabpanel" aria-labelledby="tab-investigation">
+            <div class="panel-intro"><div><span class="mini-eyebrow">END-TO-END WORKFLOW</span><h3>Customer issue investigation</h3><p>Collect bounded evidence, classify impact, identify what is missing and prepare the next support action.</p></div><span class="step-icon" aria-hidden="true">⌕</span></div>
+            <div class="form-grid">
+              <div class="field"><label for="scenario">Sample support scenario</label><select id="scenario"></select><p id="scenario-purpose" class="field-help"></p></div>
+              <div class="field"><label for="ticket">Customer report <span class="optional">editable</span></label><textarea id="ticket" rows="5" maxlength="7000" spellcheck="true"></textarea><div class="field-footer"><span>Try changing the report or choosing a different case.</span><span id="ticket-count">0 / 6,000</span></div></div>
+              <div class="field-action"><button id="analyze" type="button" class="btn btn-primary">Analyze customer issue →</button><span class="muted-mini">Synthetic evidence only · no backend connection</span></div>
+            </div>
+            <div id="investigation-output" class="output" aria-live="polite"></div>
+          </section>
+
+          <section id="panel-handoff" class="panel" role="tabpanel" aria-labelledby="tab-handoff" hidden>
+            <div class="panel-intro"><div><span class="mini-eyebrow">SUPPORT → ENGINEERING</span><h3>Engineering-ready bug report</h3><p>Transform a report into a clear reproduction summary with technical evidence, impact, hypothesis and open questions.</p></div><span class="step-icon" aria-hidden="true">↗</span></div>
+            <div class="field"><label for="handoff-ticket">Issue description</label><textarea id="handoff-ticket" rows="5" maxlength="7000"></textarea></div>
+            <div class="field-action"><button class="btn btn-primary" id="generate-handoff" type="button">Generate engineering handoff →</button><span class="muted-mini">Structured, copyable output</span></div>
+            <div id="handoff-output" class="output" aria-live="polite"></div>
+          </section>
+
+          <section id="panel-incident" class="panel" role="tabpanel" aria-labelledby="tab-incident" hidden>
+            <div class="panel-intro"><div><span class="mini-eyebrow">POLICY & HUMAN OVERSIGHT</span><h3>Incident & escalation router</h3><p>Apply deterministic P1/P2/P3 triage. High-risk cases create an approval preview—not a real escalation.</p></div><span class="step-icon" aria-hidden="true">⚑</span></div>
+            <div class="field"><label for="incident-scenario">Incident type</label><select id="incident-scenario"><option value="P2">P2 · Degraded API</option><option value="P1">P1 · Complete platform outage</option><option value="P3">P3 · Routine support request</option></select></div>
+            <div class="field"><label for="incident-text">Incident description</label><textarea id="incident-text" rows="4"></textarea></div>
+            <div class="field-action"><button id="route-incident" type="button" class="btn btn-primary">Evaluate incident →</button></div>
+            <div id="incident-output" class="output" aria-live="polite"></div>
+          </section>
+
+          <section id="panel-api" class="panel" role="tabpanel" aria-labelledby="tab-api" hidden>
+            <div class="panel-intro"><div><span class="mini-eyebrow">HTTP & INTEGRATIONS</span><h3>API error diagnostics</h3><p>Review a common status code, the likely failure layer and a practical troubleshooting sequence.</p></div><span class="step-icon" aria-hidden="true">{ }</span></div>
+            <div class="api-fields"><div class="field"><label for="status-code">HTTP response</label><select id="status-code"><option>400</option><option selected>401</option><option>403</option><option>404</option><option>429</option><option>500</option><option>503</option><option>504</option></select></div><div class="field"><label for="api-url">Example endpoint (not contacted)</label><input type="url" id="api-url" value="https://api.example.test/v1/resource"></div></div>
+            <div class="field-action"><button id="diagnose-api" type="button" class="btn btn-primary">Diagnose response →</button></div>
+            <div id="api-output" class="output" aria-live="polite"></div>
+          </section>
+
+          <section id="panel-operations" class="panel" role="tabpanel" aria-labelledby="tab-operations" hidden>
+            <div class="panel-intro"><div><span class="mini-eyebrow">SYNTHETIC SUPPORT OPERATIONS</span><h3>Support analytics & patterns</h3><p>Explore a fictional ticket queue, deterministic clustering, and sample operational KPIs.</p></div><span class="step-icon" aria-hidden="true">▥</span></div>
+            <div id="operations-output" class="output"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="about-section shell" aria-labelledby="architecture-title">
+      <div class="section-label">/ ENGINEERING PRINCIPLES</div>
+      <h2 id="architecture-title">Built around evidence, <span class="gradient-text">not guesswork.</span></h2>
+      <p class="about-lead">The public website is deliberately lightweight. The full Python agent, FastAPI service, Streamlit UI, regression tests and n8n workflows remain available in the same GitHub repository for deeper review.</p>
+      <div class="principle-grid">
+        <article class="principle"><span class="principle-num">01 /</span><h3>Evidence first</h3><p>Request IDs, response codes, service status and missing context are surfaced before root-cause assumptions.</p></article>
+        <article class="principle"><span class="principle-num">02 /</span><h3>Deterministic controls</h3><p>Severity and high-risk routing are controlled by application rules, not unconstrained model output.</p></article>
+        <article class="principle"><span class="principle-num">03 /</span><h3>Human approval</h3><p>Outage, security and failed-tool scenarios stop at a clearly marked approval boundary.</p></article>
+        <article class="principle"><span class="principle-num">04 /</span><h3>Verifiable implementation</h3><p>Both the browser demo engine and original Python code are version-controlled and tested.</p></article>
+      </div>
+      <div class="resource-strip"><div><strong>Want to inspect the implementation?</strong><span>Source, architecture, API contracts, regression tests and reviewer walkthrough.</span></div><div class="resource-links"><a href="https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/blob/master/ARCHITECTURE.md" target="_blank" rel="noopener noreferrer">Architecture ↗</a><a href="https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/blob/master/VERIFICATION.md" target="_blank" rel="noopener noreferrer">Verification ↗</a><a href="https://github.com/danecodesnc/dane-agentic-ai-support-portfolio" target="_blank" rel="noopener noreferrer">Repository ↗</a></div></div>
+    </section>
+  </main>
+
+  <footer class="footer"><div class="shell footer-inner"><span>© <span id="year">2026</span> Dane Edwards · Applied AI & Enterprise Support</span><span>GitHub Pages · Browser-only simulation · No tracking or external writes</span></div></footer>
+</body>
+</html>

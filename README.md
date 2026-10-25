@@ -7,11 +7,13 @@
 
 ## Start here — no technical knowledge needed
 
-### Easiest option: open the live demo
+### Easiest option: open the GitHub Pages browser demo
 
-**[▶ OPEN THE LIVE PORTFOLIO](https://ai-support-portfolio-production.up.railway.app)**
+**[▶ OPEN THE LIVE PORTFOLIO](https://danecodesnc.github.io/dane-agentic-ai-support-portfolio/)**
 
-Nothing to install. Open the link, choose a scenario, and click the action button.
+Nothing to install. Open the link, choose a scenario, and click an action button. The GitHub Pages experience is a self-contained **JavaScript simulation** over fictional evidence. It does **not** execute the Python/FastAPI app or make live LLM calls.
+
+**Hosting:** GitHub Pages (free) with GitHub Actions deployment. See [GitHub Pages migration and setup](GITHUB_PAGES.md) and the browser regression tests in [docs/engine.test.mjs](docs/engine.test.mjs).
 
 ### Windows one-click option
 
@@ -42,7 +44,7 @@ This is a public, synthetic-data portfolio showing how enterprise Technical Supp
 - human-in-the-loop approval;
 - n8n orchestration;
 - automated tests and CI;
-- Railway demo deployment.
+- GitHub Pages interactive browser demo; the original Python deployment remains available as source code but does not run on Pages.
 
 > **Confidentiality:** Every customer, ticket, log, service-status record, product name, and operational example in this repository is fictional/synthetic. No Avalara or other former-employer proprietary information, credentials, customer data, or internal documentation is included.
 
@@ -145,7 +147,7 @@ The optional live path uses the same synthetic tools through LLM function callin
 
 ## Built-in demo scenarios
 
-The Streamlit UI includes several scenarios so an interviewer can see different behavior without inventing inputs:
+The browser demo and the preserved Streamlit UI include several scenarios so an interviewer can see different behavior without inventing inputs:
 
 1. **401 credential rotation** — recommended first demo;
 2. **SAML SSO / SCIM provisioning failure** — generic enterprise identity scenario;
@@ -167,7 +169,8 @@ The Incident Router also demonstrates an interactive **Approve / Reject / Escala
 | **[n8n Orchestration Verification](n8n_runner/)** | Trigger → normalization → classification → guardrail → human-routing decision | Official n8n container import/execution verification |
 | **[API Diagnostics Agent](api_diagnostics_agent/)** | HTTP/API troubleshooting for common client/server errors | Deterministic regression-tested helper |
 | **[FastAPI Support Service](api.py)** | REST endpoints, Pydantic validation, OpenAPI/Postman surface | Endpoint behavior regression-tested |
-| **[Streamlit Demo UI](app.py)** | Non-engineer demo, scenario selection, observability, human decision | Public portfolio UI |
+| **[GitHub Pages interactive website](docs/index.html)** | Browser-only JavaScript simulation, responsive UI, scenario selection, support lifecycle | JavaScript regression-tested; no backend or live LLM |
+| **[Streamlit Demo UI](app.py)** | Original Python UI, scenario selection, observability, human decision | Preserved runnable Python source and smoke tests |
 
 ## Architecture
 
