@@ -25,10 +25,11 @@
       <div class="hero-content">
         <div class="eyebrow"><span class="status-pulse" aria-hidden="true"></span> INTERACTIVE • BROWSER-BASED PORTFOLIO</div>
         <h1 id="hero-title">Enterprise support, <span class="gradient-text">engineered for clarity.</span></h1>
-        <p class="hero-description">A hands-on demonstration of how structured evidence, API troubleshooting, explainable automation and human oversight improve technical support outcomes.</p>
+        <p class="hero-description">Explore real-world enterprise support patterns through fictional tickets: API diagnostics, structured troubleshooting, customer updates and human-reviewed escalation. Built on support and technical account management experience.</p>
         <div class="hero-actions">
           <a href="#workspace" class="btn btn-primary">Explore the demos <span aria-hidden="true">↗</span></a>
-          <a href="https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/blob/master/REVIEWER_GUIDE.md" class="btn btn-outline" target="_blank" rel="noopener noreferrer">Reviewer guide</a>
+          <a href="https://github.com/danecodesnc/dane-agentic-ai-support-portfolio" class="btn btn-outline" target="_blank" rel="noopener noreferrer">View source code ↗</a>
+          <a href="#how-it-works" class="hero-text-link">Review architecture ↓</a>
         </div>
         <div class="expertise"><span>REST / SOAP APIs</span><span>Escalations & RCA</span><span>Human-in-the-loop</span><span>Applied AI tooling</span></div>
       </div>
@@ -42,12 +43,13 @@
     </section>
 
     <div class="shell">
-      <div class="notice" role="note"><span class="notice-icon" aria-hidden="true">ⓘ</span><div><strong>Safe, self-contained simulation.</strong> All customers, logs, metrics and incidents are fictional. These browser demos use deterministic JavaScript rules, not live LLM inference or a running Python backend. They never contact customer systems or perform external writes. <a href="#how-it-works">How it works</a>.</div></div>
+      <div class="notice" role="note"><span class="notice-icon" aria-hidden="true">ⓘ</span><div><strong>Safe, self-contained simulation.</strong> All customer records, logs, metrics and incidents are fictional. Browser demos use deterministic JavaScript, not live LLM inference or a Python backend. Inputs stay in this browser session; no external writes are made. Please do not enter real customer information or secrets. <a href="#how-it-works">How it works</a>.</div></div>
     </div>
 
     <section id="workspace" class="workspace-section shell" aria-labelledby="workspace-title">
       <div class="section-label">/ INTERACTIVE WORKBENCH</div>
-      <div class="section-heading"><div><h2 id="workspace-title">Explore the support lifecycle</h2><p>Choose a workflow below, then run a scenario. Every output is generated directly in your browser.</p></div><span class="tag-live">LOCAL DEMO ENGINE</span></div>
+      <div class="section-heading"><div><h2 id="workspace-title">Explore the support lifecycle</h2><p>Start with the 401 scenario, then inspect the evidence or generate a customer and engineering update.</p></div><span class="tag-live">LOCAL DEMO ENGINE</span></div>
+      <div class="quickstart" aria-label="One-minute reviewer walkthrough"><span class="quickstart-label">60-SECOND TOUR</span><span><b>1</b> Run the 401 demo</span><span><b>2</b> Inspect the synthetic evidence</span><span><b>3</b> Generate an engineering handoff</span><a href="https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/blob/master/REVIEWER_GUIDE.md" target="_blank" rel="noopener noreferrer">Full reviewer guide ↗</a></div>
       <div class="workspace">
         <div class="tabs" role="tablist" aria-label="Portfolio demos">
           <button id="tab-investigation" class="tab active" type="button" role="tab" aria-selected="true" aria-controls="panel-investigation" data-tab="investigation"><span>01</span> Investigation</button>
@@ -61,8 +63,8 @@
             <div class="panel-intro"><div><span class="mini-eyebrow">END-TO-END WORKFLOW</span><h3>Customer issue investigation</h3><p>Collect bounded evidence, classify impact, identify what is missing and prepare the next support action.</p></div><span class="step-icon" aria-hidden="true">⌕</span></div>
             <div class="form-grid">
               <div class="field"><label for="scenario">Sample support scenario</label><select id="scenario"></select><p id="scenario-purpose" class="field-help"></p></div>
-              <div class="field"><label for="ticket">Customer report <span class="optional">editable</span></label><textarea id="ticket" rows="5" maxlength="7000" spellcheck="true"></textarea><div class="field-footer"><span>Try changing the report or choosing a different case.</span><span id="ticket-count">0 / 6,000</span></div></div>
-              <div class="field-action"><button id="analyze" type="button" class="btn btn-primary">Analyze customer issue →</button><span class="muted-mini">Synthetic evidence only · no backend connection</span></div>
+              <div class="field"><label for="ticket">Customer report <span class="optional">editable</span></label><textarea id="ticket" rows="5" maxlength="7000" spellcheck="true"></textarea><div class="field-footer"><span>Editing a preset switches to Custom. Use fictional data only.</span><span id="ticket-count">0 / 6,000</span></div></div>
+              <div class="field-action"><button id="analyze" type="button" class="btn btn-primary">Analyze customer issue →</button><button id="reset-investigation" type="button" class="btn btn-soft">Reset to 401 example</button><span class="muted-mini">Synthetic evidence only · no backend connection</span></div>
             </div>
             <div id="investigation-output" class="output" aria-live="polite"></div>
           </section>
@@ -107,7 +109,7 @@
         <article class="principle"><span class="principle-num">03 /</span><h3>Human approval</h3><p>Outage, security and failed-tool scenarios stop at a clearly marked approval boundary.</p></article>
         <article class="principle"><span class="principle-num">04 /</span><h3>Verifiable implementation</h3><p>Both the browser demo engine and original Python code are version-controlled and tested.</p></article>
       </div>
-      <div class="resource-strip"><div><strong>Want to inspect the implementation?</strong><span>Source, architecture, API contracts, regression tests and reviewer walkthrough.</span></div><div class="resource-links"><a href="https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/blob/master/ARCHITECTURE.md" target="_blank" rel="noopener noreferrer">Architecture ↗</a><a href="https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/blob/master/VERIFICATION.md" target="_blank" rel="noopener noreferrer">Verification ↗</a><a href="https://github.com/danecodesnc/dane-agentic-ai-support-portfolio" target="_blank" rel="noopener noreferrer">Repository ↗</a></div></div>
+      <div class="resource-strip"><div><strong>Browser simulation ≠ Python backend</strong><span>The website runs local deterministic JavaScript. Original Python/FastAPI, agent tooling, optional LLM code, tests and n8n workflows remain reviewable in GitHub but are not executed here.</span></div><div class="resource-links"><a href="https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/blob/master/ARCHITECTURE.md" target="_blank" rel="noopener noreferrer">Architecture ↗</a><a href="https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/blob/master/VERIFICATION.md" target="_blank" rel="noopener noreferrer">Verification ↗</a><a href="https://github.com/danecodesnc/dane-agentic-ai-support-portfolio" target="_blank" rel="noopener noreferrer">Repository ↗</a></div></div>
     </section>
   </main>
 

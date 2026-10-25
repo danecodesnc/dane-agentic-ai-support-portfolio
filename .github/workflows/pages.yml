@@ -8,6 +8,13 @@ on:
       - ".github/workflows/pages.yml"
       - "README.md"
       - "REVIEWER_GUIDE.md"
+  pull_request:
+    paths:
+      - "docs/**"
+      - ".github/workflows/pages.yml"
+      - "README.md"
+      - "REVIEWER_GUIDE.md"
+      - "GITHUB_PAGES.md"
   workflow_dispatch:
 
 permissions:
@@ -42,6 +49,7 @@ jobs:
   deploy:
     name: Publish to GitHub Pages
     needs: verify
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

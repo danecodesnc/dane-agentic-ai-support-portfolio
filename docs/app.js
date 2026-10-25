@@ -48,17 +48,28 @@ function chooseScenario(){
   syncTicketCount();
 }
 $("scenario").addEventListener("change",chooseScenario);
-$("ticket").addEventListener("input",syncTicketCount);
+$("ticket").addEventListener("input",()=>{
+  // Editing a preset must not silently preserve the synthetic tool-failure flag.
+  if ($("scenario").value !== "custom") {
+    $("scenario").value = "custom";
+    $("scenario-purpose").textContent = SCENARIOS.find(x=>x.id==="custom").purpose;
+  }
+  $("investigation-output").innerHTML = "";
+  syncTicketCount();
+});
+$("reset-investigation").addEventListener("click",()=>{
+  $("scenario").value = "credentials";
+  chooseScenario();
+  $("ticket").focus();
+});
 chooseScenario();
 $("handoff-ticket").value=SCENARIOS[0].ticket;
 
-let activeInvestigation=null;
 $("analyze").addEventListener("click",()=>{
   try {
     const scenario=SCENARIOS.find(x=>x.id===$("scenario").value);
     const ticket=$("ticket").value;
     const result=investigate(ticket,{simulateToolFailure:scenario?.failure||false});
-    activeInvestigation={ticket:result.ticket,result};
     const repro=reproductionStatus(result.ticket,result);
     const tech=technicalEvidence(result.ticket,result);
     const missing=missingInformation(result.ticket);
@@ -70,6 +81,7 @@ $("analyze").addEventListener("click",()=>{
     html+=box("Recommended troubleshooting",listHtml(result.troubleshooting_steps,true));
     html+=box("Technical evidence",kv([["Service status",pretty(tech.service_status)],["HTTP / network",tech.http_response],["Request ID",tech.request_id],["Environment",tech.environment],["Endpoint",tech.endpoint]]));
     html+=box("Evidence needed",missing.length?listHtml(missing):'<p>No obvious fields are missing from the report.</p>');
+    html+=box("Confidence & evidence limitations",'<p><strong>Rule-based demo score:</strong> '+esc(Math.round(result.confidence*100))+'%. This configured heuristic is not a probability, and no live system or customer was tested.</p>',true);
     html+=box("Reproduction assessment",'<p><strong>'+esc(repro.status)+'</strong></p><p>'+esc(repro.reason)+'</p>',true);
     html+=box("Synthetic sources",'<div class="pill-row">'+evidenceNames.map(x=>'<span class="pill">'+esc(x)+'</span>').join("")+'</div>',true);
     html+='</div>';
@@ -84,7 +96,7 @@ $("analyze").addEventListener("click",()=>{
     $("create-investigation-handoff").addEventListener("click",()=>{
       $("investigation-extra").innerHTML=codeOutput("Engineering handoff",formatHandoff(generateHandoff(result.ticket,result)),"copy-investigation-result");
     });
-  }catch(ex){activeInvestigation=null;error("investigation-output",ex.message);}
+  }catch(ex){error("investigation-output",ex.message);}
 });
 
 $("generate-handoff").addEventListener("click",()=>{
@@ -154,13 +166,22 @@ document.addEventListener("click",async event=>{
   if(!button)return;
   const target=$(button.dataset.copy);
   if(!target)return;
-  try{
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error("Clipboard API unavailable");
     await navigator.clipboard.writeText(target.textContent);
     button.textContent="Copied ✓";
     button.setAttribute("aria-label","Text copied to clipboard");
-  }catch{
-    button.textContent="Select text to copy";
+  } catch {
+    // Explicit selectable fallback for browsers that deny clipboard permission.
+    target.tabIndex = 0;
     target.focus();
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(target);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    button.textContent="Text selected — Ctrl+C";
+    button.setAttribute("aria-label","Text selected. Press Control C to copy");
   }
 });
 $("year").textContent=String(new Date().getFullYear());
