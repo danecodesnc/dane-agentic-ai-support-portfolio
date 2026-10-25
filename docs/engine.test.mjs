@@ -7,9 +7,11 @@ import {
   diagnoseApi, routeIncident, humanDecision, duplicatePatterns, supportMetrics
 } from "./engine.mjs";
 
-test("all seven preset workflows exist and use synthetic inputs",()=>{
-  assert.equal(SCENARIOS.length,7);
-  assert.ok(SCENARIOS.every(s=>s.id&&s.ticket&&s.purpose));
+test("seven sample workflows and one custom workflow are available",()=>{
+  assert.equal(SCENARIOS.length,8);
+  assert.ok(SCENARIOS.every(s=>s.id&&s.purpose));
+  assert.ok(SCENARIOS.filter(s=>s.id!=="custom").every(s=>s.ticket));
+  assert.equal(SCENARIOS.find(s=>s.id==="custom").ticket,"");
 });
 test("401 investigation aligns with Python severity and category",()=>{
   const s=SCENARIOS[0],result=investigate(s.ticket);
@@ -113,5 +115,62 @@ test("site includes all five accessible interactive panels",()=>{
     assert.match(html,new RegExp('id="panel-'+id+'"'));
   }
   assert.match(html,/type="module" src="\.\/app\.js"/);
-  assert.match(html,/browser demos use deterministic JavaScript rules/i);
+  assert.match(html,/Browser demos use deterministic JavaScript/i);
+});
+
+
+test("unknown customer never inherits the default customer authentication logs",()=>{
+  const report=investigate("A fictional customer reports an unexpected integration issue.");
+  assert.equal(report.category,"integration");
+  assert.equal(report.evidence.filter(x=>x.source==="log_query").length,0);
+  assert.equal(report.human_approval_required,false);
+});
+test("unrelated 504 synthetic fixtures do not determine an ambiguous CUST-202 report",()=>{
+  const report=investigate("Customer CUST-202 says the integration behaves differently in production.");
+  assert.equal(report.category,"integration");
+  assert.equal(report.evidence.filter(x=>x.source==="log_query").length,0);
+  assert.equal(reproductionStatus(report.ticket,report).status,"Not reproduced");
+});
+test("explicit customer and issue must both match the static logs",()=>{
+  const mismatch=investigate("Customer CUST-202 reports an HTTP 401 unauthorized error in production.");
+  assert.equal(mismatch.category,"authentication");
+  assert.equal(mismatch.evidence.filter(x=>x.source==="log_query").length,0);
+  const match=investigate("Customer CUST-202 reports HTTP 504 timeout in production.");
+  assert.ok(match.evidence.some(x=>x.source==="log_query"&&x.detail.status===504));
+});
+test("a security breach receives P1 treatment and human review",()=>{
+  const report=investigate("Customer reports a security breach in production.");
+  assert.equal(report.severity,"P1");
+  assert.equal(report.human_approval_required,true);
+});
+test("service state is explicitly a fictional fixture, never live operational status",()=>{
+  const report=investigate(SCENARIOS[4].ticket);
+  assert.equal(technicalEvidence(report.ticket,report).service_status,"Synthetic fixture only — no live health check");
+  assert.ok(report.evidence.some(x=>x.source==="service_status"&&x.detail.state==="synthetic_fixture_only_not_live"));
+});
+test("generated shell examples safely quote URL command substitutions",()=>{
+  const dangerous="https://api.example.test/path?filter=$(touch%20oops)";
+  const command=diagnoseApi(401,dangerous).curl_example;
+  assert.ok(command.includes("GET 'https://"));
+  assert.ok(command.includes("$(touch"));
+  assert.ok(!command.includes('GET "https://'));
+  const quote=diagnoseApi(403,"https://example.test/o'hara").curl_example;
+  assert.ok(quote.includes("'\"'\"'"));
+});
+test("diagnostic URL lengths are bounded",()=>{
+  assert.throws(()=>diagnoseApi(401,"https://example.test/"+'a'.repeat(3000)),/too long/);
+});
+test("HTML includes custom-reset UX, reviewer tour and stable accessible tabs",()=>{
+  const html=readFileSync(new URL("./index.html",import.meta.url),"utf8");
+  assert.match(html,/id="reset-investigation"/);
+  assert.match(html,/60-SECOND TOUR/);
+  assert.match(html,/id="workspace"/);
+  assert.match(html,/aria-selected="true"/);
+  assert.match(html,/No external writes|no external writes/i);
+});
+test("UI escapes reports before inserting HTML and has a clipboard fallback",()=>{
+  const app=readFileSync(new URL("./app.js",import.meta.url),"utf8");
+  assert.match(app,/replace\(\/\[&<>"'\]\//);
+  assert.match(app,/window\.getSelection\(\)/);
+  assert.match(app,/scenario"\)\.value = "custom"/);
 });

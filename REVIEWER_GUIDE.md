@@ -6,7 +6,7 @@ This portfolio is designed to be easy to evaluate quickly.
 
 **Live demo:** https://danecodesnc.github.io/dane-agentic-ai-support-portfolio/
 
-Use the default sample ticket in **Customer Issue Investigation** and click **Analyze Customer Issue**.
+Start the **60-SECOND TOUR** near the demo. Select **401 · Credential rotation** (the default) and click **Analyze customer issue**.
 
 You will see a plain-English browser-based investigation of a synthetic HTTP 401 credential-rotation issue, including severity, synthetic evidence pattern matching, missing information, troubleshooting steps, a customer-facing update, and an engineering-ready handoff.
 
@@ -38,17 +38,17 @@ This public site is HTML/CSS/JavaScript hosted entirely on GitHub Pages. It simu
 2. Generate the **Customer Update** and explain the customer-facing communication boundary.
 3. Generate the **Engineering Handoff** and show reproduction, evidence, confidence, and recommended engineering investigation.
 4. Open **Support Operations** to show deterministic duplicate detection and synthetic support metrics.
-5. Run the **Synthetic diagnostic-tool failure** scenario and show that incomplete evidence routes to human review.
-6. Open **Architecture & Automation** to show the n8n workflow and deterministic-vs-probabilistic control boundaries.
+5. Run the **Diagnostic tool · Unavailable** preset to see the human-review boundary. Switch to Custom by editing the ticket and confirm the failure simulation no longer applies.
+6. Follow the **Architecture** navigation link to review controls and preserved Python/n8n source. There is no separate Architecture & Automation browser tab.
 7. Review `VERIFICATION.md` for evidence of what has actually run.
 8. Review `atlas_support_agent/live_agent.py` for the bounded Responses API function-calling loop.
 9. Review `.github/workflows/n8n-verification.yml` and `n8n_runner/workflow.json` for the executed n8n workflow.
 
 ## Verification boundary
 
-The portfolio intentionally distinguishes between code that exists and code that has been executed.
+The portfolio distinguishes implemented source code from what has actually been executed. Browser-side sample log evidence and rule scores are deterministic fixtures, not live diagnostic results or calibrated probabilities.
 
-**Verified by tests:** Python support logic, FastAPI endpoint behavior, deterministic guardrails, function-call control-loop plumbing, telemetry plumbing, n8n import/execution, and the new browser-only JavaScript workflow engine. The GitHub Pages UI does not call the Python backend or the OpenAI API.
+**Verification boundary:** GitHub Actions runs deterministic JavaScript and preserved Python regressions. Prior n8n verification evidence is documented in `VERIFICATION.md`; external live LLM execution remains credential-gated. Passing unit tests is not proof of cross-browser user interaction. The GitHub Pages UI does not call the Python backend or the OpenAI API.
 
 **Credential-gated:** the external OpenAI Responses API path is implemented with a fail-closed verifier but is not labeled as externally verified until a private API credential is used successfully.
 

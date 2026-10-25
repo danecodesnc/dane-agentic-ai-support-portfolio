@@ -10,7 +10,8 @@ export const SCENARIOS = [
   {id:"unknown", name:"Unknown · Low confidence", ticket:"Customer CUST-202 reports intermittent unexpected behavior with no timestamps, request IDs, endpoints, or reproducible steps.", purpose:"Demonstrate restrained conclusions when details are incomplete.", failure:false},
   {id:"outage", name:"P1 · Complete outage", ticket:"Production down - complete outage for all customers. Preserve evidence and escalate immediately.", purpose:"Show hard-coded human approval for high-risk incidents.", failure:false},
   {id:"failure", name:"Diagnostic tool · Unavailable", ticket:"Customer CUST-101 reports an authentication failure in production, but the diagnostic log tool is unavailable.", purpose:"Fail safely into human review when an evidence source fails.", failure:true},
-  {id:"timeout", name:"504 · Upstream timeout", ticket:"Customer CUST-202 reports repeated HTTP 504 timeouts in production at /api/v1/resource. Multiple requests are affected and request IDs are available for investigation.", purpose:"Trace synthetic upstream timeouts and next troubleshooting steps.", failure:false}
+  {id:"timeout", name:"504 · Upstream timeout", ticket:"Customer CUST-202 reports repeated HTTP 504 timeouts in production at /api/v1/resource. Multiple requests are affected and request IDs are available for investigation.", purpose:"Trace synthetic upstream timeouts and next troubleshooting steps.", failure:false},
+  {id:"custom", name:"Custom report · Your own example", ticket:"", purpose:"Describe a fictional customer issue. Nothing is sent to a server.", failure:false}
 ];
 
 export const SYNTHETIC_TICKETS = [
@@ -60,7 +61,7 @@ function customerId(ticket) {
   const match = ticket.toUpperCase().match(/CUST-\d+/);
   if (match) return match[0];
   if (/acme|saml|scim/i.test(ticket)) return "CUST-303";
-  return "CUST-101"; // Same documented synthetic default as the Python demo.
+  return null; // Unlike the preserved Python demo, unknown customers are never assigned another customer's synthetic logs.
 }
 function searchKnowledge(ticket) {
   const terms = words(ticket);
@@ -81,17 +82,16 @@ export function missingInformation(ticket) {
   if (!["after","when","steps","reproduce","rotat","enabled","returning"].some(word=>t.includes(word))) missing.push("reproduction steps");
   return missing;
 }
-function classify(ticket,logs) {
+function classify(ticket) {
   const t = ticket.toLowerCase();
-  const logText = logs.map(x=>x.message).join(" ").toLowerCase();
-  if (t.includes("production down") || t.includes("complete outage"))
+  if (["production down","complete outage","security breach","data loss","data corruption","credential leak"].some(x=>t.includes(x)))
     return ["P1","availability",.97,["Service availability incident"],["Confirm blast radius","Escalate to an incident owner","Preserve request IDs and timestamps"]];
   if (["saml","scim","identity provider","idp","workspace"].some(x=>t.includes(x)) &&
       ["access","missing","provision","authenticate","login"].some(x=>t.includes(x)))
     return ["P2","identity_sso_scim",.95,["SAML identifier mapping and SCIM provisioning are inconsistent for the affected user."],SSO_CHECKS];
-  if (t.includes("401") || t.includes("unauthorized") || logText.includes("invalid api key"))
+  if (t.includes("401") || t.includes("unauthorized") || t.includes("credential rejected"))
     return ["P2","authentication",.94,["Stale or mismatched production credential","Credential rotation did not propagate to the production runtime"],["Compare the production Authorization header to the working Postman request","Verify the secret source/environment","Use request IDs to confirm the rejected credential path"]];
-  if (t.includes("504") || t.includes("timeout") || logText.includes("upstream timeout"))
+  if (t.includes("504") || t.includes("timeout"))
     return ["P2","performance",.90,["Upstream latency or timeout"],["Capture request IDs and durations","Check service health","Review bounded retry/backoff behavior"]];
   if (t.includes("429"))
     return ["P3","rate_limit",.91,["Rate limit exceeded"],["Inspect Retry-After","Add exponential backoff with jitter","Reduce burst concurrency"]];
@@ -103,14 +103,25 @@ export function investigate(rawTicket,{simulateToolFailure=false}={}) {
   const truncated = rawTicket.trim().length > 6000;
   const cid = customerId(ticket);
   const customer = CUSTOMERS[cid] || {found:false};
-  const logs = simulateToolFailure ? [] : LOGS.filter(log=>log.customer_id===cid);
+  const relevantStatus = /\b401\b|unauthorized|api key|credential|secret rotation/i.test(ticket) ? 401
+    : /\b504\b|timeout|upstream latency/i.test(ticket) ? 504
+    : /saml|scim|identity provider|idp|workspace/i.test(ticket) ? 403 : null;
+  // Match synthetic evidence to BOTH an explicitly identified customer (or the generic SSO fixture)
+  // AND the issue type. Never infer a root cause from another ticket's unrelated log fixture.
+  const logs = simulateToolFailure || !cid || !relevantStatus ? []
+    : LOGS.filter(log=>log.customer_id===cid && log.status===relevantStatus);
   const toolErrors = simulateToolFailure ? ["query_logs synthetic failure: diagnostic evidence unavailable"] : [];
   const guardrails = [];
   if (truncated) guardrails.push("input_truncated_to_configured_budget");
-  const [severity,category,confidence,likely_causes,troubleshooting_steps] = classify(ticket,logs);
+  const [severity,category,confidence,likely_causes,troubleshooting_steps] = classify(ticket);
   let forced = severity==="P1";
   let reason = forced ? "P1 incidents require human escalation." : "No deterministic high-risk signal detected.";
-  if (forced) guardrails.push("p1_requires_human_approval");
+  if (forced) {
+    guardrails.push("p1_requires_human_approval");
+    if (["security breach","data loss","data corruption","credential leak"].some(term=>ticket.toLowerCase().includes(term))) {
+      guardrails.push("high_risk_signal_requires_human_approval");
+    }
+  }
   if (toolErrors.length) {
     forced = true;
     reason = "A required diagnostic tool failed; this investigation needs human review.";
@@ -125,7 +136,7 @@ export function investigate(rawTicket,{simulateToolFailure=false}={}) {
   }
   const evidence = [
     {source:"customer_lookup",detail:customer},
-    {source:"service_status",detail:{state:"operational",incidents:[]}},
+    {source:"service_status",detail:{state:"synthetic_fixture_only_not_live",incidents:[]}},
     ...logs.slice(0,2).map(detail=>({source:"log_query",detail})),
     ...searchKnowledge(ticket)
   ];
@@ -166,7 +177,7 @@ export function technicalEvidence(ticket,result) {
   const endpoint = ticket.match(/(https?:\/\/\S+|\/api\/[\w\-/]+)/);
   const browser=/(browser|saml|workspace)/i.test(ticket);
   return {
-    service_status:service?.state || "unknown",
+    service_status:service?.state === "synthetic_fixture_only_not_live" ? "Synthetic fixture only — no live health check" : "Not checked",
     http_response:log ? log.status+" "+log.message : "Not captured",
     request_id:log?.request_id || "Not provided",
     environment:/production|prod/i.test(ticket)?"Production":"Not explicitly provided",
@@ -243,8 +254,11 @@ export function diagnoseApi(status,url="https://api.example.test/v1/resource") {
   try { parsed=new URL(url); } catch { throw new Error("Enter a complete HTTP or HTTPS example URL."); }
   if (!["http:","https:"].includes(parsed.protocol) || parsed.username || parsed.password)
     throw new Error("Only HTTP or HTTPS URLs without embedded credentials are allowed.");
+  if (parsed.href.length > 2048) throw new Error("Example URL is too long (maximum 2,048 characters).");
   const [category,explanation,checks,escalate]=API_RULES[n]||["Unknown","No rule is defined for this status.",["Capture complete request/response","Check documentation","Escalate with request ID"],true];
-  return {status:n,category,explanation,checks,escalate,curl_example:"curl -i -X GET "+JSON.stringify(parsed.href)+" -H 'Authorization: Bearer $API_TOKEN' -H 'Accept: application/json'"};
+  // POSIX-safe single quoting avoids command substitution when a user copies an example URL.
+  const shellQuote = value => "'" + value.replaceAll("'", "'\"'\"'") + "'";
+  return {status:n,category,explanation,checks,escalate,curl_example:"curl -i -X GET "+shellQuote(parsed.href)+" -H 'Authorization: Bearer $API_TOKEN' -H 'Accept: application/json'"};
 }
 export function routeIncident(ticket) {
   if (typeof ticket!=="string" || ticket.trim().length<5) throw new Error("Describe the incident in at least five characters.");

@@ -1,5 +1,6 @@
 # Dane Edwards — AI-Powered Technical Support Operations Portfolio
 
+[![GitHub Pages — Portfolio](https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/actions/workflows/pages.yml/badge.svg)](https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/actions/workflows/pages.yml)
 [![Portfolio Tests](https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/actions/workflows/tests.yml/badge.svg)](https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/actions/workflows/tests.yml)
 [![n8n Workflow Verification](https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/actions/workflows/n8n-verification.yml/badge.svg)](https://github.com/danecodesnc/dane-agentic-ai-support-portfolio/actions/workflows/n8n-verification.yml)
 
@@ -77,7 +78,7 @@ New interview-focused capabilities include:
 - explicit reproduction status and missing-information detection;
 - explainable deterministic duplicate/pattern detection;
 - a synthetic support-operations dashboard;
-- REST endpoints for handoffs, customer updates, duplicates, and metrics.
+- REST endpoints for handoffs, customer updates, duplicates, and metrics in the **preserved Python/FastAPI source** (not hosted on GitHub Pages).
 
 The SSO/SCIM example is a generic enterprise identity scenario and is not presented as TheyDo's internal authentication implementation.
 ## Why did I build it?
@@ -128,7 +129,9 @@ The application—not the model—controls:
 - human approval;
 - whether external writes are allowed.
 
-The public demo keeps external writes disabled.
+The public GitHub Pages demo uses deterministic JavaScript, not an AI model. External writes are disabled and the website does not call the optional Python LLM integration.
+
+**Evidence note:** Demo rule scores are predefined heuristic values, not empirically calibrated probabilities. All log/status evidence is synthetic; arbitrary customer reports are not assigned unrelated sample logs. For the original Python behavior, see the preserved implementation and tests.
 
 ## What does the agent actually do?
 
@@ -147,7 +150,7 @@ The optional live path uses the same synthetic tools through LLM function callin
 
 ## Built-in demo scenarios
 
-The browser demo and the preserved Streamlit UI include several scenarios so an interviewer can see different behavior without inventing inputs:
+The public browser demo includes seven selectable example reports plus an editable custom report. The preserved Streamlit application has its own Python scenario set:
 
 1. **401 credential rotation** — recommended first demo;
 2. **SAML SSO / SCIM provisioning failure** — generic enterprise identity scenario;
@@ -155,8 +158,10 @@ The browser demo and the preserved Streamlit UI include several scenarios so an 
 4. **Low-confidence unknown issue**;
 5. **P1 complete outage**;
 6. **Synthetic diagnostic-tool failure**;
-7. **Malformed/too-short input**;
-8. **Complex multi-tool timeout case**.
+7. **HTTP 504 upstream timeout**;
+8. **Custom report** — create a fictional example. Invalid or too-short inputs display a validation message.
+
+Synthetic diagnostic-tool failure is activated by selecting its preset. Editing a preset switches the browser to Custom mode so an edited ticket is never silently treated as the original failure scenario.
 
 The Incident Router also demonstrates an interactive **Approve / Reject / Escalate** human-decision step for high-risk routes while still reporting `external_action_taken: false`.
 
