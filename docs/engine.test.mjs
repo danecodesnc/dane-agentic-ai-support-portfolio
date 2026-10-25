@@ -115,7 +115,7 @@ test("site includes all five accessible interactive panels",()=>{
     assert.match(html,new RegExp('id="panel-'+id+'"'));
   }
   assert.match(html,/type="module" src="\.\/app\.js"/);
-  assert.match(html,/browser demos use deterministic JavaScript rules/i);
+  assert.match(html,/Browser demos use deterministic JavaScript/i);
 });
 
 

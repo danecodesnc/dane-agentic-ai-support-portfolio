@@ -116,7 +116,12 @@ export function investigate(rawTicket,{simulateToolFailure=false}={}) {
   const [severity,category,confidence,likely_causes,troubleshooting_steps] = classify(ticket);
   let forced = severity==="P1";
   let reason = forced ? "P1 incidents require human escalation." : "No deterministic high-risk signal detected.";
-  if (forced) guardrails.push("p1_requires_human_approval");
+  if (forced) {
+    guardrails.push("p1_requires_human_approval");
+    if (["security breach","data loss","data corruption","credential leak"].some(term=>ticket.toLowerCase().includes(term))) {
+      guardrails.push("high_risk_signal_requires_human_approval");
+    }
+  }
   if (toolErrors.length) {
     forced = true;
     reason = "A required diagnostic tool failed; this investigation needs human review.";
